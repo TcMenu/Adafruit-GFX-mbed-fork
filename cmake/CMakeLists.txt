@@ -13,6 +13,7 @@ target_compile_definitions(AdafruitGFXNativePort
 
 target_include_directories(AdafruitGFXNativePort PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/../src
+        ${CMAKE_CURRENT_LIST_DIR}/../Fonts
 )
 
 target_link_libraries(AdafruitGFXNativePort PUBLIC pico_stdlib pico_sync IoAbstraction TaskManagerIO tcUnicodeHelper)
