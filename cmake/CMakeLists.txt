@@ -1,8 +1,10 @@
-
+cmake_minimum_required(VERSION 3.13)
 
 file(GLOB SOURCES 
-        "${CMAKE_CURRENT_LIST_DIR}/../src/*.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/../src/oled/*.cpp"
+        ../src/Adafruit_SSD1306.cpp
+        ../src/Adafruit_GFX.cpp
+        ../src/oled/AdafruitSSD1306I2c.cpp
+        ../src/oled/AdafruitSSD1306Spi.cpp
 )
 
 add_library(AdafruitGFXNativePort ${SOURCES})
@@ -12,8 +14,8 @@ target_compile_definitions(AdafruitGFXNativePort
 )
 
 target_include_directories(AdafruitGFXNativePort PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/../src
-        ${CMAKE_CURRENT_LIST_DIR}/../Fonts
+        ../src
+        ..
 )
 
 target_link_libraries(AdafruitGFXNativePort PUBLIC pico_stdlib pico_sync IoAbstraction TaskManagerIO tcUnicodeHelper)
