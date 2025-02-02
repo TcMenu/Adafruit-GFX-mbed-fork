@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.13)
 
 add_library(AdafruitGFXNativePort
         ../src/Adafruit_SSD1306.cpp
@@ -11,7 +12,7 @@ target_compile_definitions(AdafruitGFXNativePort
 )
 
 target_include_directories(AdafruitGFXNativePort PUBLIC
-        ${PROJECT_SOURCE_DIR}/mbed_lib/Adafruit-GFX-mbed-fork/src
+        ../src
 )
 
 target_link_libraries(AdafruitGFXNativePort PUBLIC pico_stdlib pico_sync IoAbstraction TaskManagerIO tcUnicodeHelper)
