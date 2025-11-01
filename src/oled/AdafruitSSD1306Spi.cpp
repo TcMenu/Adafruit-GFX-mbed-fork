@@ -3,8 +3,7 @@
 AdafruitSSD1306Spi::AdafruitSSD1306Spi(const SPIWithSettings &spi, pinid_t DC, pinid_t RST, int16_t rawHeight, int16_t rawWidth,
                                        UnicodeEncodingMode encodingMode, OledType displayType)
     : Adafruit_SSD1306(RST, rawHeight, rawWidth, encodingMode)
-            , mDisplayType(displayType)
-            , mspi(spi), dcPin(DC) {
+            , dcPin(DC), mDisplayType(displayType), mspi(spi) {
     internalDigitalDevice().pinMode(dcPin, OUTPUT);
     internalDigitalDevice().digitalWriteS(dcPin, LOW);
 }
