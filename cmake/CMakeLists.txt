@@ -11,7 +11,7 @@ target_compile_definitions(AdafruitGFXNativePort
 )
 
 target_include_directories(AdafruitGFXNativePort PUBLIC
-        ${PROJECT_SOURCE_DIR}/mbed_lib/Adafruit-GFX-mbed-fork/src
+        ${PROJECT_SOURCE_DIR}/mbed_libs/Adafruit-GFX-mbed-fork/src
 )
 
 target_link_libraries(AdafruitGFXNativePort PUBLIC pico_stdlib pico_sync IoAbstraction TaskManagerIO tcUnicodeHelper)
