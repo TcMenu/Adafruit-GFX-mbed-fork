@@ -28,7 +28,25 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include <IoAbstraction.h>
 #include "Adafruit_GFX.h"
-#include <tcUnicodeAdaGFX.h>
+
+class InternalAdaPlotPipeline : public TextPlotPipeline {
+private:
+    Adafruit_GFX *gfx;
+public:
+    explicit InternalAdaPlotPipeline(Adafruit_GFX *gfx) : gfx(gfx) {
+    }
+
+    ~InternalAdaPlotPipeline() override = default;
+
+    void drawPixel(uint16_t x, uint16_t y, uint32_t dc) override { return gfx->drawPixel(x, y, dc); }
+
+    void setCursor(const Coord &where) override { gfx->setCursor(where.x, where.y); }
+
+    Coord getCursor() override { return Coord(gfx->getCursorX(), gfx->getCursorY()); }
+
+    Coord getDimensions() override { return Coord(gfx->width(), gfx->height()); }
+};
+
 
 // Many (but maybe not all) non-AVR board installs define macros
 // for compatibility with existing PROGMEM-reading AVR code.
@@ -43,26 +61,6 @@ POSSIBILITY OF SUCH DAMAGE.
 #ifndef pgm_read_dword
 #define pgm_read_dword(addr) (*(const unsigned long *)(addr))
 #endif
-
-inline GFXglyph *pgm_read_glyph_ptr(const GFXfont *gfxFont, uint8_t c) {
-
-    // expression in __AVR__ section may generate "dereferencing type-punned
-  // pointer will break strict-aliasing rules" warning In fact, on other
-  // platforms (such as STM32) there is no need to do this pointer magic as
-  // program memory may be read in a usual way So expression may be simplified
-  return gfxFont->glyph + c;
-}
-
-inline uint8_t *pgm_read_bitmap_ptr(const GFXfont *gfxFont) {
-    // expression in __AVR__ section generates "dereferencing type-punned pointer
-  // will break strict-aliasing rules" warning In fact, on other platforms (such
-  // as STM32) there is no need to do this pointer magic as program memory may
-  // be read in a usual way So expression may be simplified
-  return gfxFont->bitmap;
-}
-
-// Pointers are a peculiar case...typically 16-bit on AVR boards,
-// 32 bits elsewhere.  Try to accommodate both...
 
 #ifndef min
 #define min(a, b) (((a) < (b)) ? (a) : (b))
@@ -86,7 +84,7 @@ inline uint8_t *pgm_read_bitmap_ptr(const GFXfont *gfxFont) {
 */
 /**************************************************************************/
 Adafruit_GFX::Adafruit_GFX(int16_t w, int16_t h, UnicodeEncodingMode encMode) : WIDTH(w), HEIGHT(h) {
-    fontHandler = new UnicodeFontHandler(new AdafruitTextPlotPipeline(this), encMode);
+    fontHandler = new UnicodeFontHandler(new InternalAdaPlotPipeline(this), encMode);
     _width = WIDTH;
     _height = HEIGHT;
     rotation = 0;
