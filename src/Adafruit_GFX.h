@@ -24,6 +24,14 @@ All text above must be included in any redistribution
 #include "tcUnicodeHelper.h"
 #include <PrintCompat.h>
 
+#ifndef color_t
+#ifdef NEED_32BIT_COLOR_T_ALPHA
+typedef uint32_t color_t;
+#else
+typedef uint16_t color_t;
+#endif
+#endif
+
 #ifndef pgm_read_byte
 #define pgm_read_byte(x) (*x)
 #endif //pgm_read_byte
@@ -60,7 +68,7 @@ public:
       @param color  16-bit pixel color.
     */
     /**********************************************************************/
-    virtual void drawPixel(int16_t x, int16_t y, uint16_t color) = 0;
+    virtual void drawPixel(int16_t x, int16_t y, color_t color) = 0;
 
     void setTextSize(int sz, int sz1=0) {}
 
@@ -69,17 +77,17 @@ public:
     // optimized code.  Otherwise 'generic' versions are used.
     virtual void startWrite();
 
-    virtual void writePixel(int16_t x, int16_t y, uint16_t color);
+    virtual void writePixel(int16_t x, int16_t y, color_t color);
 
     virtual void writeFillRect(int16_t x, int16_t y, int16_t w, int16_t h,
-                               uint16_t color);
+                               color_t color);
 
-    virtual void writeFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
+    virtual void writeFastVLine(int16_t x, int16_t y, int16_t h, color_t color);
 
-    virtual void writeFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
+    virtual void writeFastHLine(int16_t x, int16_t y, int16_t w, color_t color);
 
     virtual void writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
-                           uint16_t color);
+                           color_t color);
 
     virtual void endWrite();
 
@@ -95,59 +103,59 @@ public:
     // optimized code.  Otherwise 'generic' versions are used.
 
     // It's good to implement those, even if using transaction API
-    virtual void drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
+    virtual void drawFastVLine(int16_t x, int16_t y, int16_t h, color_t color);
 
-    virtual void drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
+    virtual void drawFastHLine(int16_t x, int16_t y, int16_t w, color_t color);
 
     virtual void fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
-                          uint16_t color);
+                          color_t color);
 
-    virtual void fillScreen(uint16_t color);
+    virtual void fillScreen(color_t color);
 
     // Optional and probably not necessary to change
     virtual void drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
-                          uint16_t color);
+                          color_t color);
 
     virtual void drawRect(int16_t x, int16_t y, int16_t w, int16_t h,
-                          uint16_t color);
+                          color_t color);
 
     // These exist only with Adafruit_GFX (no subclass overrides)
-    void drawCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color);
+    void drawCircle(int16_t x0, int16_t y0, int16_t r, color_t color);
 
     void drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername,
-                          uint16_t color);
+                          color_t color);
 
-    void fillCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color);
+    void fillCircle(int16_t x0, int16_t y0, int16_t r, color_t color);
 
     void fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername,
-                          int16_t delta, uint16_t color);
+                          int16_t delta, color_t color);
 
     void drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2,
-                      int16_t y2, uint16_t color);
+                      int16_t y2, color_t color);
 
     void fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2,
-                      int16_t y2, uint16_t color);
+                      int16_t y2, color_t color);
 
     void drawRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h,
-                       int16_t radius, uint16_t color);
+                       int16_t radius, color_t color);
 
     void fillRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h,
-                       int16_t radius, uint16_t color);
+                       int16_t radius, color_t color);
 
     void drawBitmap(int16_t x, int16_t y, const uint8_t bitmap[], int16_t w,
-                    int16_t h, uint16_t color);
+                    int16_t h, color_t color);
 
     void drawBitmap(int16_t x, int16_t y, const uint8_t bitmap[], int16_t w,
-                    int16_t h, uint16_t color, uint16_t bg);
+                    int16_t h, color_t color, color_t bg);
 
     void drawBitmap(int16_t x, int16_t y, uint8_t *bitmap, int16_t w, int16_t h,
-                    uint16_t color);
+                    color_t color);
 
     void drawBitmap(int16_t x, int16_t y, uint8_t *bitmap, int16_t w, int16_t h,
-                    uint16_t color, uint16_t bg);
+                    color_t color, color_t bg);
 
     void drawXBitmap(int16_t x, int16_t y, const uint8_t bitmap[], int16_t w,
-                     int16_t h, uint16_t color);
+                     int16_t h, color_t color);
 
     void drawGrayscaleBitmap(int16_t x, int16_t y, const uint8_t bitmap[],
                              int16_t w, int16_t h);
@@ -196,6 +204,8 @@ public:
         fontHandler->setFont(f);
     }
 
+    void setTextWrap(bool wrap) {}
+
     /**********************************************************************/
     /*!
       @brief  Set text cursor location
@@ -216,11 +226,11 @@ public:
                are set to same color rather than using a separate flag.
     */
     /**********************************************************************/
-    void setTextColor(uint32_t c) {
+    void setTextColor(color_t c) {
         fontHandler->setDrawColor(c);
     }
 
-    void setTextColor(uint16_t c, uint16_t bg) {
+    void setTextColor(color_t c, color_t bg) {
         fontHandler->setDrawColor(c);
     }
 
@@ -291,13 +301,13 @@ public:
 
     ~GFXcanvas1(void);
 
-    void drawPixel(int16_t x, int16_t y, uint16_t color) override;
+    void drawPixel(int16_t x, int16_t y, color_t color) override;
 
-    void fillScreen(uint16_t color) override;
+    void fillScreen(color_t color) override;
 
-    void drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) override;
+    void drawFastVLine(int16_t x, int16_t y, int16_t h, color_t color) override;
 
-    void drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color) override;
+    void drawFastHLine(int16_t x, int16_t y, int16_t w, color_t color) override;
 
     bool getPixel(int16_t x, int16_t y) const;
     /**********************************************************************/
@@ -311,9 +321,9 @@ public:
 protected:
     bool getRawPixel(int16_t x, int16_t y) const;
 
-    void drawFastRawVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
+    void drawFastRawVLine(int16_t x, int16_t y, int16_t h, color_t color);
 
-    void drawFastRawHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
+    void drawFastRawHLine(int16_t x, int16_t y, int16_t w, color_t color);
 
 private:
     uint8_t *buffer;

@@ -57,7 +57,7 @@ public:
 	// These must be implemented in the derived transport driver
 	virtual void command(uint8_t c) = 0;
 	virtual void data(uint8_t c) = 0;
-	void drawPixel(int16_t x, int16_t y, uint16_t color) override;
+	void drawPixel(int16_t x, int16_t y, color_t color) override;
 
 	/// Clear the display buffer    
 	void clearDisplay();

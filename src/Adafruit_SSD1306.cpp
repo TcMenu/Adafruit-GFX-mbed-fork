@@ -108,7 +108,7 @@ void Adafruit_SSD1306::begin(uint8_t vccstate)
 }
 
 // Set a single pixel
-void Adafruit_SSD1306::drawPixel(int16_t x, int16_t y, uint16_t color)
+void Adafruit_SSD1306::drawPixel(int16_t x, int16_t y, color_t color)
 {
     if ((x < 0) || (x >= width()) || (y < 0) || (y >= height()))
         return;
