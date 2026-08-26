@@ -97,30 +97,29 @@ void AdafruitFrameBuffer<MemTy>::writeFastHLine(int16_t x, int16_t y, int16_t w,
 template <typename MemTy>
 void AdafruitFrameBuffer<MemTy>::drawBitmapNBpp(const Coord& where, const uint8_t* data, const Coord& size, int bpp,
     const color_t* palette) {
-    Coord start;
-    if (!correctDimensions(where.x, where.y, start) || bpp != 2 || bpp != 4) return;
+    if (data == nullptr || palette == nullptr) return;
+    if (!(bpp == 2 || bpp == 4)) return;
+    if (size.x <= 0 || size.y <= 0) return;
 
-    const int bitsInByte = bpp == 2 ? 4 : 2;
-    const uint8_t downShift = bpp == 2 ? 6 : 4;
+    const int pixelsPerByte = 8 / bpp;
+    const int rowBytes = ((size.x * bpp) + 7) / 8;
 
-    uint8_t byteIteration = bitsInByte;
-    uint8_t current = 0;
-    auto totX = static_cast<int16_t>(start.x + size.x);
-    auto totY = static_cast<int16_t>(start.y + size.y);
-    if (totX >= WIDTH) totX = WIDTH - 1;
-    if (totY >= HEIGHT) totY = HEIGHT - 1;
-    for (auto y = start.x; y < totY; y++) {
-        for (auto x = 0; x < totX; x++) {
-            if(byteIteration == bitsInByte) {
-                current = *data;
-                data += 1;
-                byteIteration = 0;
-            }
-            const uint8_t idx = current >> downShift;
-            current = current << bpp;
-            byteIteration++;
+    for (int16_t srcY = 0; srcY < size.y; ++srcY) {
+        const int16_t dstY = static_cast<int16_t>(where.y + srcY);
+        if (dstY < 0 || dstY >= HEIGHT) continue;
 
-            buffer[start.x + x + (start.y + y) * WIDTH] = palette[idx];
+        const uint8_t* rowData = data + (srcY * rowBytes);
+
+        for (int16_t srcX = 0; srcX < size.x; ++srcX) {
+            const int16_t dstX = static_cast<int16_t>(where.x + srcX);
+            if (dstX < 0 || dstX >= WIDTH) continue;
+
+            const uint8_t packedByte = rowData[srcX / pixelsPerByte];
+            const uint8_t shift = static_cast<uint8_t>(8 - bpp - ((srcX % pixelsPerByte) * bpp));
+            const uint8_t mask = static_cast<uint8_t>((1U << bpp) - 1U);
+            const uint8_t idx = static_cast<uint8_t>((packedByte >> shift) & mask);
+
+            drawPixel(dstX, dstY, palette[idx]);
         }
     }
 }
