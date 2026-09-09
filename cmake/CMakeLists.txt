@@ -10,6 +10,10 @@ if (BUILD_FOR_STM32CUBE)
     target_compile_definitions(AdafruitGFXNativePort
             PUBLIC BUILD_FOR_STM32CUBE_CMAKE=1 IO_LOGGING_DEBUG=1
     )
+elseif (BUILD_NATIVE_TESTS)
+    target_compile_definitions(AdafruitGFXNativePort
+            PUBLIC BUILD_FOR_NATIVE_PLATFORM=1 IO_LOGGING_DEBUG=1
+    )
 else ()
     target_compile_definitions(AdafruitGFXNativePort
             PUBLIC BUILD_FOR_PICO_CMAKE=1 BUILD_PICO_FORCE_UART=1 IO_LOGGING_DEBUG=1
