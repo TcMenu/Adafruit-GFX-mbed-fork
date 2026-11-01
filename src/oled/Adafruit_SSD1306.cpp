@@ -143,8 +143,7 @@ void Adafruit_SSD1306::invertDisplay(bool i)
 }
 
 // Send the display buffer out to the display
-void Adafruit_SSD1306::display(void)
-{
+void Adafruit_SSD1306::display(void) {
 	command(SSD1306_SETLOWCOLUMN | 0x0);  // low col = 0
 	command(SSD1306_SETHIGHCOLUMN | 0x0);  // hi col = 0
 	command(SSD1306_SETSTARTLINE | 0x0); // line #0
@@ -152,13 +151,11 @@ void Adafruit_SSD1306::display(void)
 }
 
 // Clear the display buffer. Requires a display() call at some point afterwards
-void Adafruit_SSD1306::clearDisplay()
-{
+void Adafruit_SSD1306::clearDisplay() {
 	memset(buffer, 0, buffSize);
 }
 
-void Adafruit_SSD1306::splash()
-{
+void Adafruit_SSD1306::splash() {
 #ifndef NO_SPLASH_ADAFRUIT
 	uint8_t adaFruitLogo[64 * 128 / 8] =
 	{ 
@@ -233,10 +230,176 @@ void Adafruit_SSD1306::splash()
 #endif
 }
 
+void Adafruit_SSD1306::writeFastVLine(int16_t x, int16_t y, int16_t h, color_t color) {
+    if ((x < 0) || (x >= width()) || (h == 0)) {
+        return;
+    }
+
+    if (h < 0) {
+        y += h + 1;
+        h = -h;
+    }
+
+    if (y < 0) {
+        h += y;
+        y = 0;
+    }
+
+    if (y >= height() || h <= 0) {
+        return;
+    }
+
+    if (y + h > height()) {
+        h = height() - y;
+    }
+
+    switch (getRotation()) {
+        case 0:
+            drawFastRawVLine(x, y, h, color);
+            break;
+        case 1:
+            drawFastRawHLine(HEIGHT - y - h, x, h, color);
+            break;
+        case 2:
+            drawFastRawVLine(WIDTH - 1 - x, HEIGHT - y - h, h, color);
+            break;
+        case 3:
+            drawFastRawHLine(y, HEIGHT - 1 - x, h, color);
+            break;
+    }
+}
+
+void Adafruit_SSD1306::writeFastHLine(int16_t x, int16_t y, int16_t w, color_t color) {
+    if ((y < 0) || (y >= height()) || (w == 0)) {
+        return;
+    }
+
+    if (w < 0) {
+        x += w + 1;
+        w = -w;
+    }
+
+    if (x < 0) {
+        w += x;
+        x = 0;
+    }
+
+    if (x >= width() || w <= 0) {
+        return;
+    }
+
+    if (x + w > width()) {
+        w = width() - x;
+    }
+
+    switch (getRotation()) {
+        case 0:
+            drawFastRawHLine(x, y, w, color);
+            break;
+        case 1:
+            drawFastRawVLine(HEIGHT - 1 - y, x, w, color);
+            break;
+        case 2:
+            drawFastRawHLine(WIDTH - x - w, HEIGHT - 1 - y, w, color);
+            break;
+        case 3:
+            drawFastRawVLine(y, HEIGHT - x - w, w, color);
+            break;
+    }
+}
+
+void Adafruit_SSD1306::drawFastRawVLine(int16_t x, int16_t y, int16_t h, color_t color) {
+    if (!buffer || (x < 0) || (x >= WIDTH) || (h <= 0)) {
+        return;
+    }
+    if (y < 0) {
+        h += y;
+        y = 0;
+    }
+    if ((y >= HEIGHT) || (h <= 0)) {
+        return;
+    }
+    if (y + h > HEIGHT) {
+        h = HEIGHT - y;
+    }
+
+    int16_t start_page = y / 8;
+    int16_t end_page = (y + h - 1) / 8;
+    uint8_t start_bit = y & 7;
+    uint8_t end_bit = (y + h - 1) & 7;
+
+    uint8_t *pBuf = &buffer[x + start_page * WIDTH];
+
+    if (start_page == end_page) {
+        uint8_t mask = ((1U << h) - 1) << start_bit;
+        if (color) {
+            *pBuf |= mask;
+        } else {
+            *pBuf &= ~mask;
+        }
+    } else {
+        uint8_t first_mask = 0xFF << start_bit;
+        if (color) {
+            *pBuf |= first_mask;
+        } else {
+            *pBuf &= ~first_mask;
+        }
+        pBuf += WIDTH;
+
+        int16_t middle_pages = end_page - start_page - 1;
+        if (color) {
+            while (middle_pages-- > 0) {
+                *pBuf = 0xFF;
+                pBuf += WIDTH;
+            }
+        } else {
+            while (middle_pages-- > 0) {
+                *pBuf = 0x00;
+                pBuf += WIDTH;
+            }
+        }
+
+        uint8_t last_mask = (1U << (end_bit + 1)) - 1;
+        if (color) {
+            *pBuf |= last_mask;
+        } else {
+            *pBuf &= ~last_mask;
+        }
+    }
+}
+
+void Adafruit_SSD1306::drawFastRawHLine(int16_t x, int16_t y, int16_t w, color_t color) {
+    if (!buffer || (y < 0) || (y >= HEIGHT) || (w <= 0)) {
+        return;
+    }
+    if (x < 0) {
+        w += x;
+        x = 0;
+    }
+    if ((x >= WIDTH) || (w <= 0)) {
+        return;
+    }
+    if (x + w > WIDTH) {
+        w = WIDTH - x;
+    }
+
+    uint8_t *pBuf = &buffer[x + (y / 8) * WIDTH];
+    uint8_t mask = 1 << (y & 7);
+    if (color) {
+        while (w--) {
+            *pBuf++ |= mask;
+        }
+    } else {
+        mask = ~mask;
+        while (w--) {
+            *pBuf++ &= mask;
+        }
+    }
+}
+
 Adafruit_SSD1306::Adafruit_SSD1306(pinid_t RST, int16_t rawHeight, int16_t rawWidth, UnicodeEncodingMode encodingMode)
         : Adafruit_GFX(rawWidth,rawHeight, encodingMode)
-        , rst(RST)
-{
+        , rst(RST) {
     buffSize = (rawHeight / 8) * rawWidth;
     buffer = new uint8_t[buffSize];
 };

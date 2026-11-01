@@ -24,7 +24,7 @@ All text above, and the splash screen must be included in any redistribution
 #define _ADAFRUIT_SSD1306_H_
 
 #include <PlatformDetermination.h>
-#include "Adafruit_GFX.h"
+#include "../Adafruit_GFX.h"
 
 #ifndef PROGMEM
 #define PROGMEM
@@ -49,6 +49,8 @@ protected:
     // the memory buffer for the LCD
     uint8_t* buffer;
     size_t buffSize;
+    void drawFastRawVLine(int16_t x, int16_t y, int16_t h, color_t color);
+    void drawFastRawHLine(int16_t x, int16_t y, int16_t w, color_t color);
 public:
 	Adafruit_SSD1306(pinid_t RST, int16_t rawHeight, int16_t rawWidth, UnicodeEncodingMode encodingMode);
 
@@ -67,6 +69,12 @@ public:
 	void display();
 	/// Fill the buffer with the AdaFruit splash screen.
 	virtual void splash();
+
+    void writeFastVLine(int16_t x, int16_t y, int16_t h, color_t color) override;
+    void writeFastHLine(int16_t x, int16_t y, int16_t w, color_t color) override;
+    void drawFastVLine(int16_t x, int16_t y, int16_t h, color_t color) override { writeFastVLine(x, y, h, color); }
+    void drawFastHLine(int16_t x, int16_t y, int16_t w, color_t color) override { writeFastHLine(x, y, w, color); }
+
 };
 
 #endif

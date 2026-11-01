@@ -4,7 +4,7 @@
 
 #include <PlatformDeterminationWire.h>
 #include "../Adafruit_GFX.h"
-#include "../Adafruit_SSD1306.h"
+#include "Adafruit_SSD1306.h"
 
 /** This is the I2C SSD1306 display driver transport class
  *
