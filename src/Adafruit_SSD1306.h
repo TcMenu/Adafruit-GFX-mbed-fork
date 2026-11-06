@@ -24,7 +24,7 @@ All text above, and the splash screen must be included in any redistribution
 #define _ADAFRUIT_SSD1306_H_
 
 #include <PlatformDetermination.h>
-#include "../Adafruit_GFX.h"
+#include "Adafruit_GFX.h"
 
 #ifndef PROGMEM
 #define PROGMEM

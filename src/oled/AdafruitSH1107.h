@@ -95,15 +95,30 @@
 #define SH1107_SET_COL_ADDR_MSB(col)        (SH1107_SET_COL_ADDR_MSB_BASE | (((col) >> 4) & 0x07))
 #define SH1107_SET_PAGE_ADDR(page)          (SH1107_SET_PAGE_ADDR_BASE    | ((page) & 0x0F))
 
+/**
+ * This class implements the SH1107 OLED display driver. It is a clean implementation of the SH1107 display controller
+ * that is fully compatible with our fork of the Adafruit GFX class. It implements both fast line functions and pixel
+ * drawing, so should perform well. Never use this class directly as it requires command and data functions, use the SPI
+ * or I2C variants instead.
+ *
+ * Should your display require an offset to function properly, use the setOffsets(..) function to configure it before
+ * first drawing.
+ */
 class TcAdaSH1107 : public Adafruit_GFX {
 private:
     // the memory buffer for the LCD
     uint8_t* buffer = nullptr;
     size_t buffSize = 0;
+    uint8_t rowOffset = 0;
+    uint8_t colOffset = 0;
+
+    void drawFastRawVLine(int16_t x, int16_t y, int16_t h, color_t color);
+    void drawFastRawHLine(int16_t x, int16_t y, int16_t w, color_t color);
 
 public:
     /**
-     * Create a display with a custom height, for this display, the width is always 128.
+     * Create a display with a custom height, for this display, the width is always 128. If you have an earlier display
+     * that needs an offset to be applied, use the setOffsets() method.
      * @param RST the reset pin or -1 if not used
      * @param rawHeight the height of the display
      * @param encodingMode the encoding mode to use (default UTF8)
@@ -111,11 +126,26 @@ public:
     TcAdaSH1107(pinid_t RST, int16_t rawHeight, tccore::UnicodeEncodingMode encodingMode = ENCMODE_UTF8);
 
     /**
-     * Create a display with a default width and height of 128x128.
+    * Create a display with a default width and height of 128x128. If you have an earlier display
+     * that needs an offset to be applied, use the setOffsets() method.
      * @param RST the reset pin or -1 if not used
      * @param encodingMode the encoding mode to use (default UTF8)
      */
     TcAdaSH1107(pinid_t RST, tccore::UnicodeEncodingMode encodingMode);
+
+    ~TcAdaSH1107() override;
+
+    /**
+     * Some display drivers require an offset to be set to properly display the data. For example earlier models of
+     * the display used a horizontal offset of 96, and 64 line displays sometimes require a vertical offset of 64.
+     * Most modern displays do not require an offset.
+     * @param rowOffs the vertical offset
+     * @param colOffs the horizontal offset
+     */
+    void setOffsets(uint8_t rowOffs, uint8_t colOffs) {
+        this->rowOffset = rowOffs;
+        this->colOffset = colOffs;
+    }
 
     /**
      * Actually start the display so it can present data, going through the initialization sequence.
@@ -124,16 +154,23 @@ public:
 
     void drawPixel(int16_t x, int16_t y, color_t color) override;
 
+    void writeFastVLine(int16_t x, int16_t y, int16_t h, color_t color) override;
+    void writeFastHLine(int16_t x, int16_t y, int16_t w, color_t color) override;
+    void drawFastVLine(int16_t x, int16_t y, int16_t h, color_t color) override { writeFastVLine(x, y, h, color); }
+    void drawFastHLine(int16_t x, int16_t y, int16_t w, color_t color) override { writeFastHLine(x, y, w, color); }
+
     /**
      * Send the display buffer out to the display. Required to "commit" what has been drawn to the display.
      */
     void display();
 
     /**
-     * Clear the display buffer. Requires a display() call at some point afterwards
+     * Clear the display buffer. Requires a display() call at some point afterwards. Sets all pixels to black (0).
      */
     void clearDisplay() {
-        memset(buffer, 0, buffSize);
+        if (buffer) {
+            memset(buffer, 0, buffSize);
+        }
     }
 
     /**
@@ -141,18 +178,13 @@ public:
      * @param c the command to send
      */
     virtual void command(uint8_t c) = 0;
+
     /**
      * Implemented in specialisations for I2C or SPI to send data to the device
      * @param c the data to send
      * @param dataSize the size of the data to send
      */
     virtual void data(uint8_t* c, size_t dataSize) = 0;
-
-    /**
-     * Implemented in specialisations for I2C or SPI to send the entire display buffer to the device
-     */
-    virtual void sendDisplayBuffer() = 0;
-
 };
 
 #endif

@@ -1,11 +1,10 @@
 
 add_library(AdafruitGFXNativePort
         ../src/Adafruit_GFX.cpp
-        ../src/oled/Adafruit_SSD1306.cpp
+        ../src/Adafruit_SSD1306.cpp
         ../src/oled/AdafruitSSD1306I2c.cpp
         ../src/oled/AdafruitSSD1306Spi.cpp
         ../src/oled/AdafruitSH1107.cpp
-        ../src/oled/TcAdaSH1107SPI.cpp
 )
 
 if (BUILD_FOR_STM32CUBE)

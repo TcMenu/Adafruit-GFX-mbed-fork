@@ -5,7 +5,7 @@
 #include "IoAbstraction.h"
 #include "extras/SPIHelper.h"
 #include "../Adafruit_GFX.h"
-#include "Adafruit_SSD1306.h"
+#include "../Adafruit_SSD1306.h"
 
 /** This is the SPI SSD1306 display driver transport class
  *
