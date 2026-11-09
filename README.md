@@ -10,7 +10,7 @@ All text above must be included in any redistribution.
 
 This library carries exactly the same licensing terms as the original, any changes made in this repo are assumed to be under the same terms as the original too.
 
-## Library fork supporting SSD1306/SH1106 displays PicoSDK, ESP32-IDF, STM32Cube and mbed6
+## Library fork supporting SSD1306, SH1106, SH1107, Framebuffers on PicoSDK, ESP32-IDF, STM32Cube and mbed6
 
 TcMenu organisation have also put huge effort into making this library work on many non-Arduino/Real C++ environments such as Pico-SDK and mbed. It takes considerable effort to keep this working, please do keep in mind that both Adafruit and TcMenu have spent many hours to bring you this library.
 
