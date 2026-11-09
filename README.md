@@ -14,7 +14,7 @@ This library carries exactly the same licensing terms as the original, any chang
 
 TcMenu organisation have also put huge effort into making this library work on many non-Arduino/Real C++ environments such as Pico-SDK and mbed. It takes considerable effort to keep this working, please do keep in mind that both Adafruit and TcMenu have spent many hours to bring you this library.
 
-This library provides support for OLED displays such as SSD1306 and SH1106 devices on both PicoSDK and mbed RTOS. This is a fork of the Adafruit_GFX library with changes to run on mbed 5/6 RTOS. It is derived from a few sources:
+This library provides support for OLED displays such as SSD1306, SH1106, SH1107 devices on PicoSDK, ESP32-IDF, STM32Cube and mbed RTOS. It is derived from a few sources:
 
 * Most of the hard work was done by [AdaFruit in the Adafruit_GFX repo](https://github.com/adafruit/Adafruit-GFX-Library)
 * I then combined the latest Adafruit_GFX master with the [work originally done to support SSD1306 on mbed 2](https://os.mbed.com/users/nkhorman/code/Adafruit_GFX/)
