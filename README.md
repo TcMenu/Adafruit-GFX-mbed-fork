@@ -12,7 +12,7 @@ This library carries exactly the same licensing terms as the original, any chang
 
 ## Library fork supporting SSD1306, SH1106, SH1107, Framebuffers on PicoSDK, ESP32-IDF, STM32Cube and mbed6
 
-TcMenu organisation have also put huge effort into making this library work on many non-Arduino/Real C++ environments such as Pico-SDK and mbed. It takes considerable effort to keep this working, please do keep in mind that both Adafruit and TcMenu have spent many hours to bring you this library.
+TcMenu organisation have also put huge effort into making this library work on many non-Arduino/Real C++ environments and should also work on Arduino! It takes considerable effort to keep this working, please do keep in mind that both Adafruit and TcMenu have spent many hours to bring you this library.
 
 This library provides support for OLED displays such as SSD1306, SH1106, SH1107 devices on PicoSDK, ESP32-IDF, STM32Cube and mbed RTOS. It is derived from a few sources:
 
@@ -43,6 +43,8 @@ For I2C you can use either the above method or just use a global variable provid
 The above assume you want to use UTF-8 encoding. An important feature of this library is that it is fully UTF-8 Unicode compliant and you can use `tcUnicode` fonts with it out the box.
 
 Once created usage is almost exactly the same as regular Adafruit_GFX with tcUnicode also available (even down to the print interface) with UTF-8 support!
+
+## Framebuffer support classes
 
 There is also framebuffer support packaged with this library, where you provide the address of a memory framebuffer and it's memory organisation, then it will render into that memory area directly. This allows for exceptionally high performance. In the TcMenu examples we have an example of the framebuffer extended work with STM32Cube's LTDC and DMA2d.
 
