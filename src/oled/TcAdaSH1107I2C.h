@@ -10,8 +10,8 @@ private:
     uint8_t i2cAddress;
     uint8_t sendBuf[130];
 public:
-    TcAdaSH1107I2C(const WireType wireRef, uint8_t i2cAddress, pinid_t DC, pinid_t RST, int16_t rawHeight,UnicodeEncodingMode encodingMode)
-                : TcAdaSH1107(RST, rawHeight, encodingMode), wireRef(wireRef), i2cAddress(i2cAddress) {}
+    TcAdaSH1107I2C(const WireType wireRef, uint8_t i2cAddress, int16_t rawHeight,UnicodeEncodingMode encodingMode)
+                : TcAdaSH1107(-1, rawHeight, encodingMode), wireRef(wireRef), i2cAddress(i2cAddress) {}
 
     void command(uint8_t c) override {
         uint8_t buff[2];
