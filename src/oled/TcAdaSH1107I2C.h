@@ -1,5 +1,5 @@
-#ifndef TC_ADAFRUIT_SSD1107_SPI_H
-#define TC_ADAFRUIT_SSD1107_SPI_H
+#ifndef TC_ADAFRUIT_SSD1107_I2C_H
+#define TC_ADAFRUIT_SSD1107_I2C_H
 
 #include "IoAbstractionWire.h"
 #include "AdafruitSH1107.h"

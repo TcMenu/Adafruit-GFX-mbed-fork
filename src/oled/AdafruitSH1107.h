@@ -4,6 +4,7 @@
 #include "Adafruit_GFX.h"
 #include "PlatformDetermination.h"
 #include "Utf8TextProcessor.h"
+#include "IoAbstraction.h"
 
 // ============================================================================
 // Sino Wealth SH1107 Command / Register Definitions
@@ -111,6 +112,7 @@ private:
     size_t buffSize = 0;
     uint8_t rowOffset = 0;
     uint8_t colOffset = 0;
+    pinid_t rstPin = 0xFF;
 
     void drawFastRawVLine(int16_t x, int16_t y, int16_t h, color_t color);
     void drawFastRawHLine(int16_t x, int16_t y, int16_t w, color_t color);

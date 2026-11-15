@@ -9,16 +9,19 @@ private:
     pinid_t dcPin;
 public:
     TcAdaSH1107SPI(const SPIWithSettings& spi, pinid_t DC, pinid_t RST, int16_t rawHeight,UnicodeEncodingMode encodingMode)
-                : TcAdaSH1107(RST, rawHeight, encodingMode), spiSettings(spi), dcPin(DC) {}
+                : TcAdaSH1107(RST, rawHeight, encodingMode), spiSettings(spi), dcPin(DC) {
+        internalDigitalDevice().pinMode(dcPin, OUTPUT);
+        internalDigitalDevice().digitalWriteS(dcPin, LOW);
+    }
 
     void command(uint8_t c) override {
         internalDigitalDevice().digitalWriteS(dcPin, 0);
-        spiSettings.transferSPI(&c, 1);
+        spiSettings.write(&c, 1);
     }
 
     void data(uint8_t* c, size_t len) override {
         internalDigitalDevice().digitalWriteS(dcPin, 1);
-        spiSettings.transferSPI(c, len);
+        spiSettings.write(c, len);
     }
 };
 

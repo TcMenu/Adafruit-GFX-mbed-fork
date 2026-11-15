@@ -2,14 +2,17 @@
 
 
 TcAdaSH1107::TcAdaSH1107(pinid_t RST, int16_t rawHeight, UnicodeEncodingMode encodingMode)
-    : Adafruit_GFX(128, rawHeight, encodingMode) {
+    : Adafruit_GFX(128, rawHeight, encodingMode), rstPin(RST) {
     buffSize = (rawHeight / 8) * 128;
     buffer = new uint8_t[buffSize];
+    clearDisplay();
 }
 
-TcAdaSH1107::TcAdaSH1107(pinid_t RST, UnicodeEncodingMode encodingMode) : Adafruit_GFX(128, 128, encodingMode) {
+TcAdaSH1107::TcAdaSH1107(pinid_t RST, UnicodeEncodingMode encodingMode)
+    : Adafruit_GFX(128, 128, encodingMode), rstPin(RST) {
     buffSize = (128 / 8) * 128;
     buffer = new uint8_t[buffSize];
+    clearDisplay();
 }
 
 TcAdaSH1107::~TcAdaSH1107() {
@@ -17,18 +20,31 @@ TcAdaSH1107::~TcAdaSH1107() {
 }
 
 void TcAdaSH1107::begin() {
+    if (rstPin != 0xFF && rstPin != (pinid_t)-1) {
+        internalDigitalDevice().pinMode(rstPin, OUTPUT);
+        internalDigitalDevice().digitalWriteS(rstPin, HIGH);
+        delayMicroseconds(1000);
+        internalDigitalDevice().digitalWriteS(rstPin, LOW);
+        delayMicroseconds(10000);
+        internalDigitalDevice().digitalWriteS(rstPin, HIGH);
+        delayMicroseconds(10000);
+    }
+
     command(SH1107_DISPLAY_OFF);
-    command(SH1107_SET_DISPLAY_START_LINE);command(0);
-    command(SH1107_SET_CONTRAST);command(0x2F);
+    command(SH1107_SET_DISPLAY_CLOCK_DIV); command(0x51);
+    command(SH1107_SET_MEMORY_ADDRESSING_MODE);
+    command(SH1107_SET_CONTRAST); command(0x2F);
+    command(SH1107_SET_DCDC_CONVERTER); command(SH1107_DCDC_ON);
     command(SH1107_SET_SEG_NORMAL); // normal segment mapping
     command(SH1107_SET_COM_NORMAL); // direction mapping
-    command(SH1107_SET_MULTIPLEX_RATIO);command(0x7F);
-    command(SH1107_SET_DISPLAY_OFFSET);command(0x00);
-    command(SH1107_SET_DISPLAY_CLOCK_DIV);command(0x51);
-    command(SH1107_SET_PRECHARGE_PERIOD);command(0x22);
-    command(SH1107_SET_VCOM_DESELECT);command(0x35);
+    command(SH1107_SET_DISPLAY_START_LINE); command(0x00);
+    command(SH1107_SET_DISPLAY_OFFSET); command(rowOffset & 0x7F);
+    command(SH1107_SET_PRECHARGE_PERIOD); command(0x22);
+    command(SH1107_SET_VCOM_DESELECT); command(0x35);
+    command(SH1107_SET_MULTIPLEX_RATIO); command(HEIGHT - 1);
     command(SH1107_DISPLAY_ENTIRE_OFF);
     command(SH1107_DISPLAY_NORMAL);
+    delayMicroseconds(1000);
     command(SH1107_DISPLAY_ON);
 }
 
