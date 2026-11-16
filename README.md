@@ -14,14 +14,12 @@ This library carries exactly the same licensing terms as the original, any chang
 
 TcMenu organisation have also put huge effort into making this library work on many non-Arduino/Real C++ environments and should also work on Arduino! It takes considerable effort to keep this working, please do keep in mind that both Adafruit and TcMenu have spent many hours to bring you this library.
 
-This library provides support for OLED displays such as SSD1306, SH1106, SH1107 devices on PicoSDK, ESP32-IDF, STM32Cube and mbed RTOS. It is derived from a few sources:
+This library provides support for a number of different display technologies and is tested and known working on PicoSDK, ESP32-IDF, STM32Cube and mbed RTOS. It achieves this by using IoAbstraction to abstract away the underlying hardware and provide a common interface for different boards and toolchains.
 
-* Most of the hard work was done by [AdaFruit in the Adafruit_GFX repo](https://github.com/adafruit/Adafruit-GFX-Library)
-* I then combined the latest Adafruit_GFX master with the [work originally done to support SSD1306 on mbed 2](https://os.mbed.com/users/nkhorman/code/Adafruit_GFX/)
-* On top of this I added support for SH1106 displays (after doing a bit of digging and datasheet analysis).
-* I have added support for PicoSDK, STM32Cube and ESP32-IDF.
-* You can use the regular [Adafruit_GFX introductory guide](https://learn.adafruit.com/adafruit-gfx-graphics-library/overview) as this fork has high compatibility.
-* It requires at least IoAbstraction and TaskManagerIO as it uses their abstraction layer and also integrates well with tcMenu.
+* OLED displays such as SSD1306, SH1106, SH1107 devices. Both SPI and I2C modes supported.
+* Framebuffers (tested with LTDC on an STM32F4 board in 16-bit color).
+* ST7735 and ST7789 displays using SPI 4 wire.
+* ILI9341 displays using SPI 4 wire.
 
 ## Constructing and using a display object
 
@@ -56,15 +54,24 @@ You can consider this a distant relative of the Adafruit_GFX repository (this fo
 
 This library can work with SSD1306 and SH1106 displays over I2C or SPI. There's a couple of really simple examples packaged that show basic usage. However, you can look at almost any Adafruit example, as this library is completely compatible. This library integrates with IoAbstraction to provide a complete `Print` interface that is nearly compatible with Arduino's print functions.
 
-## What is the purpose of this fork:
-
-Every fork should state what it's purpose is:
-
-This fork provides TcMenu framework with a stable driver for mono OLEDs and color frame buffers. We have modified parts of the library to work directly with TcUnicode providing out of the UTF-8 support. It works on PicoSDK, STM32Cube, ESP32-IDF and mbed6. It allows a wider range of users to take advantage of the excellent Adafruit_GFX library. We have no intention of pulling in changes from the original unless there's either a significant API change, or a critical fix to apply.
-
 # Bitmaps and fonts with the library
 
 - With TcMenu's font export tool you can now export and even create bitmaps suitable for use with this library. You can use the GIMP photo editor to save a .xbm file and use the array saved in the file to draw a bitmap with the drawXBitmap function. [See how to use the bitmap creator in TcMenu Designer](https://tcmenu.github.io/documentation/arduino-libraries/tc-menu/creating-and-using-bitmaps-menu/) 
 - The 'Fonts' folder contains bitmap fonts that you can use with the library. This library also automatically includes `tcUnicodeHelper` and therefore supports UTF-8 Unicode strings out of box. To use a font in your Arduino sketch, `#include` the corresponding `.h` file and pass address of GFXfont struct to setFont(). 
 - **As of V1.0.0 you must choose a font there is no longer a default font.**
 - [See how to create fonts using TcMenu Designer](https://tcmenu.github.io/documentation/arduino-libraries/tc-menu/using-custom-fonts-in-menu/#creating-a-unicode-or-adafruit-font-using-the-designer-ui)
+
+## How did this fork come about?
+
+Every fork should state what it's purpose is:
+
+This fork provides TcMenu framework with a stable driver for mono OLEDs and color displays. We have modified parts of the library to work directly with TcUnicode providing out of the UTF-8 support. It works on PicoSDK, STM32Cube, ESP32-IDF and mbed6. It allows a wider range of users to take advantage of the excellent Adafruit_GFX library. We have no intention of pulling in changes from the original unless there's either a significant API change, or a critical fix to apply.
+
+It is derived from a few sources:
+
+* Most of the hard work was done by [AdaFruit in the Adafruit_GFX repo](https://github.com/adafruit/Adafruit-GFX-Library)
+* I then combined the latest Adafruit_GFX master with the [work originally done to support SSD1306 on mbed 2](https://os.mbed.com/users/nkhorman/code/Adafruit_GFX/)
+* On top of this I added support for SH1106 displays (after doing a bit of digging and datasheet analysis).
+* I have added support for PicoSDK, STM32Cube and ESP32-IDF.
+* You can use the regular [Adafruit_GFX introductory guide](https://learn.adafruit.com/adafruit-gfx-graphics-library/overview) as this fork has high compatibility.
+* It requires at least IoAbstraction and TaskManagerIO as it uses their abstraction layer and also integrates well with tcMenu.
